@@ -1,0 +1,43 @@
+# Правила работы Cline на проекте Wolf-and-Eggs
+
+## ОБЯЗАТЕЛЬНО ПЕРЕД НАЧАЛОМ РАБОТЫ
+1. Прочитай docs/00-readme.md — точка входа в проект
+2. Прочитай последние 3 записи в docs/07-progress-log.md — контекст
+3. Прочитай docs/06-roadmap.md и определи текущую фазу
+4. Если задача затрагивает архитектуру — сверься с docs/02-architecture.md
+5. Если задача затрагивает ассеты — сверься с docs/04-asset-manifest.md
+
+## ТЕХНИЧЕСКИЕ ОГРАНИЧЕНИЯ
+- Стек: HTML + CSS + Vanilla JS + Canvas API
+- ЗАПРЕЩЕНО: React, Vue, Phaser, Three.js, TypeScript, webpack, vite, npm-пакеты
+- ES Modules (import/export) — да
+- Никаких внешних библиотек без явного разрешения
+- Папка исходников: `src/`
+- Файл конфигурации: `src/config.js`
+
+## КОДИНГ-СТАЙЛ
+- 2 пробела, без точек с запятой опционально (но единообразно)
+- Имена файлов: kebab-case
+- Имена классов: PascalCase
+- Имена функций/переменных: camelCase
+- Константы: UPPER_SNAKE_CASE
+- Один класс/модуль = один файл
+
+## АРХИТЕКТУРНЫЕ ПРАВИЛА
+- Логика игры (Wolf, EggSpawner, Score, Difficulty) НЕ ЗНАЕТ о стиле рендера
+- Renderer выбирает спрайты на основе config.RENDER_MODE
+- Модули общаются через события (`src/core/event-bus.js`, `src/core/events.js`), не через прямые ссылки (где возможно)
+- Все магические числа — в `src/config.js`
+- Основные модули: `src/entities/wolf.js`, `src/systems/egg-spawner.js`, `src/systems/score.js`, `src/systems/difficulty.js`, `src/renderer/renderer.js`, `src/core/input-manager.js`, `src/core/state-manager.js`, `src/core/audio-manager.js`, `src/core/asset-loader.js`, `src/ui/ui.js`
+
+## ПРОЦЕСС
+- После каждой завершённой задачи добавь запись в docs/07-progress-log.md
+- Архитектурные решения требуют записи в docs/08-decisions.md
+- Если видишь проблему вне текущей задачи — запиши в TODO внутри файла, НЕ ЧИНИ
+- НЕ выходи за scope текущей задачи без согласования
+
+## ГРАНИЦЫ
+- Не предлагай "улучшения" архитектуры без запроса
+- Не добавляй фичи, не указанные в задаче
+- Не переписывай работающий код "для красоты"
+- Если не уверен — спроси, не делай
