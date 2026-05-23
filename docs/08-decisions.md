@@ -17,3 +17,26 @@
 - **Контекст:** Производительность Canvas при множестве спрайтов.
 - **Решение:** Использовать `createImageBitmap()` для декодирования PNG вне основного потока.
 - **Последствия:** Более быстрая отрисовка, дополнительный код загрузки.
+
+## ADR-004 — Именование модулей, resolution и коммуникация
+- **Дата:** 2026-05-23
+- **Контекст:** До старта реализации необходимо зафиксировать ключевые соглашения: имена классов, resolution, способ коммуникации модулей.
+- **Решение:**
+  - Классы игровой логики: `Wolf`, `EggSpawner`, `Score`, `Difficulty`.
+  - Утилиты: `event-bus`, `events`, `input-manager`, `asset-loader`, `config`.
+  - Имена файлов в kebab-case, пути в `src/`.
+  - Logical resolution: 320×240. Render resolution: 640×480 (×2 upscale).
+  - Коммуникация модулей — через глобальный event-bus (`src/core/event-bus.js`).
+- **Обоснование:**
+  - `Wolf` — основная сущность игрока, не `Basket` (устаревшее).
+  - `EggSpawner` — занимается и спавном, и коллизиями, в отличие от раздельных `SpawnManager` + `EggSystem`.
+  - 320×240 logical — классическое разрешение LCD-игр, 640×480 render — чёткий ×2 пиксель-арт.
+  - Event-bus отделяет producers от consumers, упрощает тестирование и добавление новых слушателей.
+- **Альтернативы:**
+  - Прямые ссылки между модулями (Wolf → EggSpawner напрямую) — отвергнуто: жёсткая связанность, сложно рефакторить и тестировать.
+  - Разделение EggSpawner на EggSystem (спавн) + CollisionManager (коллизии) — избыточно для MVP, можно выделить позже.
+  - 640×480 logical — приведёт к слишком мелким спрайтам без upscale, неоптимально для пиксель-арта.
+- **Последствия:**
+  - Затрагивает все модули: `src/entities/wolf.js`, `src/systems/egg-spawner.js`, `src/systems/score.js`, `src/systems/difficulty.js`, `src/core/input-manager.js`, `src/core/event-bus.js`, `src/core/events.js`, `src/config.js`.
+  - Все магические числа (resolution, тайминги, сложность) — в `src/config.js`.
+  - Размеры спрайтов в asset-manifest указаны в render resolution (×2 от logical).
